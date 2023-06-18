@@ -1,12 +1,13 @@
 import React from "react";
 import { BsSearch } from "react-icons/bs";
+import Header from "../Header/Header";
 
 
 const Feed = () => {
 
   return (
     <div className="w-full h-full bg-[#FAFAFA]">
-      <header className="w-full flex justify-around h-16 items-center shadow-lg ">
+      {/* <header className="w-full flex justify-around h-16 items-center shadow-lg ">
         <div className="text-xl font-semibold tracking-wider">Instagram</div>
         <div>
         
@@ -18,7 +19,8 @@ const Feed = () => {
           />
         </div>
         <div>all icons here </div>
-      </header>
+      </header> */}
+      <Header/>
     </div>
   );
 };
