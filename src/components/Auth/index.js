@@ -1,12 +1,15 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import Lottie from "react-lottie-player";
 import lottieJson from "../../../public/assets/animations/auth-page-animation.json";
 import useForm from "../../hooks/useForm";
 import { AiFillFacebook } from "react-icons/ai";
+import UserCtx from "../../context/userContext";
 
 const Auth = () => {
   const { formValues, handleChange } = useForm({ email: "", password: "" });
-
+  const [displayLogin, setDisplayLogin] = useState(true);
+const ctxdata=useContext(UserCtx)
+                  
   const isDisabled = useMemo(() => {
     return Object.values(formValues).every((item) => !!item);
   }, [formValues]);
@@ -53,10 +56,10 @@ const Auth = () => {
               />
               <button
                 type="submit"
-                className="bg-[#0095F6] py-1 text-white active:scale-95 transform transition w-full disabled:bg-opacity-50 disabled:scale-100 rounded text-sm font-semibold"
+                className="bg-[#0095F6] py-1 cursor-pointer text-white active:scale-95 transform transition w-full disabled:bg-opacity-50 disabled:scale-100 rounded text-sm font-semibold"
                 disabled={!isDisabled}
               >
-                Login
+                { displayLogin? "Login":"signup"}
               </button>
             </form>
 
@@ -67,19 +70,22 @@ const Auth = () => {
               </div>
               <div className="h-[0.8px] w-full bg-slate-400" />
             </div>
-            <div className="flex items-center justify-center w-full text-center text-indigo-900">
-              <AiFillFacebook className="inline-block mr-2 text-2xl" />
-              <span className="text-sm font-semibold">
-                signup with Facebook
-              </span>
-            </div>
-
-            <div className="w-full text-xs text-center text-indigo-900">
-              Forgotten your password?
-            </div>
+            {!displayLogin && (
+              <div className="flex items-center justify-center w-full text-center text-indigo-900">
+                <AiFillFacebook className="inline-block mr-2 text-2xl" />
+                <span className="text-sm font-semibold">
+                  signup with Facebook
+                </span>
+              </div>
+            )}
+            {displayLogin && (
+              <div className="w-full text-xs text-center text-indigo-900">
+                Forgotten your password?
+              </div>
+            )}
           </div>
           <div className="w-full py-5 space-y-5 text-sm text-center bg-white border border-gray-300">
-            Dont have account SignUp
+            Dont have account <div className="text-blue-500 inline-block cursor-pointer" onClick={()=>{setDisplayLogin(!displayLogin)}}> {displayLogin?"signUp":"sign in"}</div>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import Auth from "../components/Auth";
 import Feed from "../components/Feed";
 
 const HomePage = () => {
-  const[isAuthonticatesd,setIsAuthonticatesd]=useState(true)
+  const[isAuthonticatesd,setIsAuthonticatesd]=useState(false)
   return (
     <div>
       {
