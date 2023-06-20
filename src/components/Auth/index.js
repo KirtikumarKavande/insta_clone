@@ -4,19 +4,45 @@ import lottieJson from "../../../public/assets/animations/auth-page-animation.js
 import useForm from "../../hooks/useForm";
 import { AiFillFacebook } from "react-icons/ai";
 import UserCtx from "../../context/userContext";
+import { GlobalDispatchContext } from "../../context/userContextProvider";
 
+import { BiLoaderCircle } from "react-icons/bi";
+import {
+  handleLoginPromise,
+  handleSignupPromise,
+} from "../../utilitis/handlePromise";
+import { toast } from "react-hot-toast";
 const Auth = () => {
-  const { formValues, handleChange } = useForm({ email: "", password: "" });
+  const { formValues, handleChange,setForm } = useForm({ email: "", password: "" });
   const [displayLogin, setDisplayLogin] = useState(true);
-const ctxdata=useContext(UserCtx)
-                  
+  const { user, isAuthounticated, isOnboared, isLoading } = useContext(UserCtx);
+  const dispatch = useContext(GlobalDispatchContext);
+
   const isDisabled = useMemo(() => {
     return Object.values(formValues).every((item) => !!item);
   }, [formValues]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formValues);
+    dispatch({ type: "IS_LOADING", isLoading: true });
+
+    if (displayLogin) {
+      const data = await handleLoginPromise(formValues);
+      if (data.error) {
+        toast.error("Check your Email or Password");
+      } else {
+        toast.success("Login Successful");
+      }
+    } else {
+      const data = await handleSignupPromise(formValues);
+      if (data.error) {
+        toast.error(data?.error?.message);
+      } else {
+        toast.success("SignUp  Successful");
+      }
+    }
+    setForm({ email: "", password: "" })
+    dispatch({ type: "IS_LOADING", isLoading: false });
   };
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-[#FAFAFA]">
@@ -33,8 +59,14 @@ const ctxdata=useContext(UserCtx)
           <div className="relative flex flex-col w-full p-10 space-y-5 bg-white border border-gray-300">
             <form
               onSubmit={handleSubmit}
-              className="flex flex-col items-center space-y-5"
+              className="flex flex-col items-center space-y-5 relative z-1"
             >
+              {isLoading && (
+                <div className="z-30 absolute flex justify-center items-center">
+                  <BiLoaderCircle size={50} className=" animate-spin" />
+                </div>
+              )}
+
               <div className="my-5 text-5xl tracking-wider">Instagram</div>
               <input
                 type="email"
@@ -59,7 +91,7 @@ const ctxdata=useContext(UserCtx)
                 className="bg-[#0095F6] py-1 cursor-pointer text-white active:scale-95 transform transition w-full disabled:bg-opacity-50 disabled:scale-100 rounded text-sm font-semibold"
                 disabled={!isDisabled}
               >
-                { displayLogin? "Login":"signup"}
+                {displayLogin ? "Login" : "signup"}
               </button>
             </form>
 
@@ -85,7 +117,16 @@ const ctxdata=useContext(UserCtx)
             )}
           </div>
           <div className="w-full py-5 space-y-5 text-sm text-center bg-white border border-gray-300">
-            Dont have account <div className="text-blue-500 inline-block cursor-pointer" onClick={()=>{setDisplayLogin(!displayLogin)}}> {displayLogin?"signUp":"sign in"}</div>
+            Dont have account{" "}
+            <div
+              className="text-blue-500 inline-block cursor-pointer"
+              onClick={() => {
+                setDisplayLogin(!displayLogin);
+              }}
+            >
+              {" "}
+              {displayLogin ? "signUp" : "sign in"}
+            </div>
           </div>
         </div>
       </div>

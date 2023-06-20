@@ -11,7 +11,13 @@ const UserContextProvider = (props) => {
     isLoading: false,
   };
   const [state, dispatch] = useReducer(ReducerFunc, intialState);
-  return <UserCtx.Provider value={state}><GlobalDispatchContext.Provider value={dispatch}>{props.children}</GlobalDispatchContext.Provider>  </UserCtx.Provider>;
+  return (
+    <UserCtx.Provider value={state}>
+      <GlobalDispatchContext.Provider value={dispatch}>
+        {props.children}
+      </GlobalDispatchContext.Provider>{" "}
+    </UserCtx.Provider>
+  );
 };
 
 export default UserContextProvider;

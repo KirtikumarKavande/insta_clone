@@ -10,6 +10,7 @@ const useForm = (values) => {
   return {
     formValues: form,
     handleChange,
+    setForm
   };
 };
 
