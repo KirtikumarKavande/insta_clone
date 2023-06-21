@@ -9,6 +9,8 @@ import {
   Compass,
   Profile,
 } from '../Header/AllheaderIcons';
+import { useContext } from 'react';
+import { GlobalDispatchContext } from '../../context/userContextProvider';
 
 
 const HEADER_ITEMS = [
@@ -46,7 +48,7 @@ const HEADER_ITEMS = [
 
 const Header = () => {
   
-
+const dispatch=useContext(GlobalDispatchContext)
   return (
     <header className="fixed top-0 z-10 flex items-center justify-around w-full h-16 bg-white shadow-md">
       <Link href="/">
@@ -75,6 +77,7 @@ const Header = () => {
         <button
        
           className="bg-[#0095F6] py-1 h-4/5 text-white active:scale-95 transform transition disabled:bg-opacity-50 px-6 disabled:scale-100 rounded text-sm font-semibold"
+          onClick={()=>{dispatch({type:"IS_AUTHONTICATED",isAuthounticated:false}); localStorage.clear()} }
         >
           Logout
         </button>
