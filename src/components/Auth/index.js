@@ -38,10 +38,16 @@ const Auth = () => {
 
     if (displayLogin) {
       const data = await handleLoginPromise(formValues);
+      console.log("----",data)
+
       if (data.error) {
-        toast.error("Check your Email or Password");
+        
+        toast.error("Check your Email or Password ");
       } else {
         dispatch({ type: "IS_AUTHONTICATED", isAuthounticated: true });
+        dispatch({ type: "IS_ONBOARDED", isOnboared: !!data.displayName });
+
+
         toast.success("Login Successful");
         localStorage.setItem("token", data.idToken);
         localStorage.setItem("email", data.email);

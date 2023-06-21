@@ -1,6 +1,9 @@
+
 import { signIn, signUp } from "./api";
 
+
 export const handleLoginPromise = async (payload) => {
+  
   const default_Obj = {
     method: "POST",
     body: JSON.stringify(payload),
@@ -16,7 +19,7 @@ export const handleLoginPromise = async (payload) => {
     );
     const data = await response.json();
 
-    console.log("payload", data);
+   
     if (email) {
       return data;
     } else {
