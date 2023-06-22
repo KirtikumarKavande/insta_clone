@@ -1,11 +1,61 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import Header from "../Header/Header";
 import Post from "../Post/Post";
+import MyModal from "../../utilitis/Modal/Modal";
+import UserCtx from "../../context/userContext";
 
 const Feed = () => {
+  const { isModalOpen } = useContext(UserCtx);
+  console.log("+++++++++++++", isModalOpen);
+
+  const [img, setImg] = useState("");
+
+  function handleEvent(event) {
+    if (event.type === "load") {
+      console.log(reader);
+      setImg(reader.result);
+    }
+  }
+  const reader = new FileReader();
+
+  const handleFiles = (e) => {
+    const selectedFile = e.target.files[0];
+
+    if (selectedFile) {
+      reader.addEventListener("load", handleEvent);
+
+      reader.readAsDataURL(selectedFile);
+    }
+  };
   return (
-    <div className="w-full h-full bg-[#FAFAFA]">
+    <div className=" bg-[#FAFAFA] flex  ">
       <Header />
+      <MyModal isOpen={isModalOpen}>
+        <div className="flex items-center justify-start flex-col">
+          <img
+            style={{ width: "18rem", height: "12rem" }}
+            className="border border-red-500"
+            src={img}
+          />
+
+          <div className=" flex justify-center items-end">
+            <label
+              for="fileElem"
+              className="text-blue-500 cursor-pointer text-3xl font-bold"
+            >
+              Select Image
+            </label>
+
+            <input
+              type="file"
+              id="fileElem"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFiles}
+            />
+          </div>
+        </div>
+      </MyModal>
 
       <div className="grid grid-cols-3 mt-20 w-full mx-auto max-w-screen-lg gap-6  ">
         <div className="col-span-2  w-full  ">
@@ -24,7 +74,8 @@ const Feed = () => {
           </section>
         </div>
         <div className="col-span-1 bg-blue-400 h-fit  fixed  right-0 w-[8.3rem] md:w-[16rem] lg:w-[30rem] ">
-          tyhjvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvacxb nxxxxxxxxxs
+          tyhjvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvacxb
+          nxxxxxxxxxs
         </div>
       </div>
     </div>

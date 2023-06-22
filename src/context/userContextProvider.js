@@ -16,6 +16,7 @@ const UserContextProvider = (props) => {
     isAuthounticated: false,
     isOnboared: false,
     isLoading: false,
+    isModalOpen:false
   };
   const [state, dispatch] = useReducer(ReducerFunc, intialState);
 
