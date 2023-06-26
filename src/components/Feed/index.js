@@ -32,6 +32,8 @@ const Feed = () => {
     caption: "",
   });
 
+  console.log("media",media.src)
+  console.log(file)
   useEffect(() => {
     const reader = new FileReader();
 
@@ -96,6 +98,10 @@ const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const removePost=()=>{
+   setFile('')
+  }
+
   console.log(posts);
   return (
     <div className=" bg-[#FAFAFA] flex  ">
@@ -124,13 +130,19 @@ const Feed = () => {
           ) : (
             <>
               <div className=" flex justify-center items-end">
-                <input type="image" src={media.src} id="fileElem" />
+                <img type="image" src={media.src} id="fileElem" className="w-[40rem] h-[24rem]" />
               </div>
               <button
-                className="bg-[#0095F6] py-2 px-4 text-white active:scale-95 transform transition  disabled:bg-opacity-50 select-none cursor-pointer disabled:scale-100 rounded text-xl font-semibold"
+                className="bg-[#0095F6] py-2 px-4 mt-4 text-white active:scale-95 transform transition  disabled:bg-opacity-50 select-none cursor-pointer disabled:scale-100 rounded text-xl font-semibold"
                 onClick={handleUploadPost}
               >
                 Upload
+              </button>
+              <button
+                className="bg-[#0095F6] py-2 px-4 mt-4 text-white active:scale-95 transform transition  disabled:bg-opacity-50 select-none cursor-pointer disabled:scale-100 rounded text-xl font-semibold"
+                onClick={removePost}
+              >
+                Remove
               </button>
             </>
           )}
