@@ -1,59 +1,139 @@
-import React, { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+
 import Header from "../Header/Header";
+import Modal from "../../utilitis/Modal/Modal";
 import Post from "../Post/Post";
-import MyModal from "../../utilitis/Modal/Modal";
+import { storage } from "../../lib/firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { uuidv4 } from "@firebase/util";
+
 import UserCtx from "../../context/userContext";
+import { GlobalDispatchContext } from "../../context/userContextProvider";
+import MyModal from "../../utilitis/Modal/Modal";
 
 const Feed = () => {
   const { isModalOpen } = useContext(UserCtx);
-  console.log("+++++++++++++", isModalOpen);
+  const dispatch = useContext(GlobalDispatchContext);
 
-  const [img, setImg] = useState("");
+  const closeModal = () => {
+    dispatch({
+      type: "IS_MODALOPEN",
 
-  function handleEvent(event) {
-    if (event.type === "load") {
-      console.log(reader);
-      setImg(reader.result);
-    }
-  }
-  const reader = new FileReader();
+      isModalOpen: false,
+    });
+  };
 
-  const handleFiles = (e) => {
-    const selectedFile = e.target.files[0];
+  const [file, setFile] = useState("");
 
-    if (selectedFile) {
+  const [media, setMedia] = useState({
+    src: "",
+    isUploading: false,
+    caption: "",
+  });
+
+  useEffect(() => {
+    const reader = new FileReader();
+
+    const handleEvent = (e) => {
+      switch (e.type) {
+        case "load":
+          return setMedia((prev) => ({
+            ...prev,
+            src: reader.result,
+          }));
+        case "error":
+          console.log(e);
+          return toast.error("something not working");
+        default:
+          return;
+      }
+    };
+
+    if (file) {
       reader.addEventListener("load", handleEvent);
+      reader.addEventListener("error", handleEvent);
+      reader.readAsDataURL(file);
+    }
 
-      reader.readAsDataURL(selectedFile);
+    return () => {
+      reader.removeEventListener("load", handleEvent);
+      reader.removeEventListener("error", handleEvent);
+    };
+  }, [file]);
+
+  const handleUploadPost = async () => {
+    if (!file) return toast.error("please select a image first");
+    setMedia((prev) => ({ ...prev, isUploading: true }));
+
+    const toastId = toast.loading("uploading your post, wait a minute...");
+    const postName = `posts/${uuidv4()}-${file.name}`;
+
+    const storageRef = ref(storage, postName);
+
+    try {
+      const uploadTask = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(uploadTask.ref);
+      console.log(url);
+      toast.success("image has uploaded", {
+        id: toastId,
+      });
+    } catch (error) {
+      toast.error("failed to upload the image", {
+        id: toastId,
+      });
+    } finally {
+      setMedia({
+        src: "",
+        isUploading: false,
+        caption: "",
+      });
+      setFile("");
+      closeModal();
     }
   };
+
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  console.log(posts);
   return (
     <div className=" bg-[#FAFAFA] flex  ">
       <Header />
       <MyModal isOpen={isModalOpen}>
         <div className="flex items-center justify-start flex-col">
-          <img
-            style={{ width: "18rem", height: "12rem" }}
-            className="border border-red-500"
-            src={img}
-          />
-
-          <div className=" flex justify-center items-end">
-            <label
-              for="fileElem"
-              className="text-blue-500 cursor-pointer text-3xl font-bold"
-            >
-              Select Image
-            </label>
-
-            <input
-              type="file"
-              id="fileElem"
-              accept="image/*"
-              className="hidden"
-              onChange={handleFiles}
-            />
-          </div>
+          {!file ? (
+            <>
+              <label
+                htmlFor="post"
+                className="text-blue-500 cursor-pointer text-3xl font-bold"
+              >
+                Select Image
+              </label>
+              <input
+                onChange={(e) => setFile(e.target.files[0])}
+                value={file.name}
+                type="file"
+                name="post"
+                id="post"
+                className="hidden"
+                multiple={false}
+                accept="image/jpeg,image/png"
+              />
+            </>
+          ) : (
+            <>
+              <div className=" flex justify-center items-end">
+                <input type="image" src={media.src} id="fileElem" />
+              </div>
+              <button
+                className="bg-[#0095F6] py-2 px-4 text-white active:scale-95 transform transition  disabled:bg-opacity-50 select-none cursor-pointer disabled:scale-100 rounded text-xl font-semibold"
+                onClick={handleUploadPost}
+              >
+                Upload
+              </button>
+            </>
+          )}
         </div>
       </MyModal>
 
@@ -73,7 +153,7 @@ const Feed = () => {
             })}
           </section>
         </div>
-        <div className="col-span-1 bg-blue-400 h-fit  fixed  right-0 w-[8.3rem] md:w-[16rem] lg:w-[30rem] ">
+        <div className="col-span-1 bg-blue-400 h-fit  fixed  right-0 w-[8.3rem] md:w-[16rem] lg:w-[25rem] ">
           tyhjvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvacxb
           nxxxxxxxxxs
         </div>

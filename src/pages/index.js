@@ -9,6 +9,7 @@ const HomePage = () => {
  
 
   const { isAuthounticated, isOnboared } = useContext(UserCtx);
+
   return (
     <div>
       {isAuthounticated && isOnboared ? (
