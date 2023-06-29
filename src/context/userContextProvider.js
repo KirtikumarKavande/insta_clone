@@ -16,14 +16,14 @@ const UserContextProvider = (props) => {
     isAuthounticated: false,
     isOnboared: false,
     isLoading: false,
-    isModalOpen:false
+    isModalOpen: false,
   };
   const [state, dispatch] = useReducer(ReducerFunc, intialState);
 
   useEffect(() => {
     const token = localStorage?.getItem("token");
     if (!!token) {
-      dispatch({type:"IS_AUTHONTICATED",isAuthounticated:true})
+      dispatch({ type: "IS_AUTHONTICATED", isAuthounticated: true });
       fetch(
         "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyDwipkFw3qiq1a5kQ4vF4LoeXzCDH_-VBI",
         {
@@ -35,14 +35,15 @@ const UserContextProvider = (props) => {
         }
       ).then((res) => {
         res.json().then((data) => {
-          console.log(data);
-        if(data.users){
-          if (!!data?.users[0]?.displayName) {
-            dispatch({ type: "IS_ONBOARDED", isOnboared: true });
-          } else {
-            dispatch({ type: "IS_ONBOARDED", isOnboared: false });
+          // console.log(data);
+          if (data.users) {
+            if (!!data?.users[0]?.displayName) {
+              dispatch({ type: "IS_ONBOARDED", isOnboared: true });
+            } else {
+              dispatch({ type: "IS_ONBOARDED", isOnboared: false });
+            }
           }
-      }});
+        });
       });
     }
   }, []);

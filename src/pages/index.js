@@ -9,6 +9,7 @@ const HomePage = () => {
  
 
   const { isAuthounticated, isOnboared } = useContext(UserCtx);
+  console.log('onboarded',isOnboared)
 
   return (
     <div>

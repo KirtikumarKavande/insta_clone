@@ -38,15 +38,13 @@ const Auth = () => {
 
     if (displayLogin) {
       const data = await handleLoginPromise(formValues);
-      console.log("----",data)
+      // console.log("----",data)
 
       if (data.error) {
-        
         toast.error("Check your Email or Password ");
       } else {
         dispatch({ type: "IS_AUTHONTICATED", isAuthounticated: true });
         dispatch({ type: "IS_ONBOARDED", isOnboared: !!data.displayName });
-
 
         toast.success("Login Successful");
         localStorage.setItem("token", data.idToken);
@@ -80,30 +78,32 @@ const Auth = () => {
 
             {
               method: "POST",
-              body: JSON.stringify(OnBoardedValues),
+              body: JSON.stringify({
+                ...OnBoardedValues,
+                email: localStorage.getItem("email"),
+              }),
               headers: {
                 "content-type": "application/json",
               },
             }
           ).then((data) => {
-            const token=localStorage.getItem('token')
+            const token = localStorage.getItem("token");
             toast.success("Username Succesfully Created");
             fetch(`${accountInfo}AIzaSyDwipkFw3qiq1a5kQ4vF4LoeXzCDH_ - VBI`, {
               method: "POST",
               body: JSON.stringify({
-                idToken:token,
-                displayName:String(true)
+                idToken: token,
+                displayName: String(true),
               }),
               headers: {
                 "content-type": "application/json",
               },
-            }).then((res)=>{
-              res.json().then((data)=>{
-                console.log("user data",data)
-              })
-            })
+            }).then((res) => {
+              res.json().then((data) => {
+                // console.log("user data",data)
+              });
+            });
             dispatch({ type: "IS_ONBOARDED", isOnboared: true });
-
           });
         } else {
           toast.error("username Already Exists");
@@ -111,7 +111,7 @@ const Auth = () => {
       });
     });
 
-    console.log("OnBoardedValues", OnBoardedValues);
+    // console.log("OnBoardedValues", OnBoardedValues);
   };
 
   return (

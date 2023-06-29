@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { GrEmoji } from "react-icons/gr";
 import { AiOutlineHeart } from "react-icons/ai";
@@ -6,20 +6,24 @@ import { FaRegComment } from "react-icons/fa";
 
 import { BsBookmark } from "react-icons/bs";
 import { IoShareOutline } from "react-icons/io5";
+import { GlobalDispatchContext } from "../../context/userContextProvider";
 
-const Post = () => {
+const Post = (props) => {
+  console.log(props)
   return (
     <div className="mainContainer w-full border border-gray-100  ">
       <div className="1 upper flex bg-white p-2 justify-between">
         <div className="flex items-center justify-center">
           <div className="w-10 h-10 bg-gray-400 border border-pink-400 rounded-full " />
-          <div className="  ml-2">username</div>
+          <div className="  ml-2">{props.userName}</div>
         </div>
         <div className="items-center">
           <BsThreeDots size={25} />
         </div>
       </div>
-      <div className="2 w-full h-96 bg-black aspect-square "></div>
+      {/* <div className="2 w-full h-96 bg-black aspect-square ">{props.image}</div> */}
+
+      <img src={props.image} className="2 w-full h-96 "/>
       <div className="3 flex justify-between">
         <div className="flex  mt-2 space-x-3">
           <div>

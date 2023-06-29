@@ -13,8 +13,16 @@ import { GlobalDispatchContext } from "../../context/userContextProvider";
 import MyModal from "../../utilitis/Modal/Modal";
 
 const Feed = () => {
+
+const dataFetchedRef = useRef(false)
+
+  const email = localStorage.getItem("email");
+
+  const [posts, setPosts] = useState([]);
+
   const { isModalOpen } = useContext(UserCtx);
   const dispatch = useContext(GlobalDispatchContext);
+  const { user } = useContext(UserCtx);
 
   const closeModal = () => {
     dispatch({
@@ -32,8 +40,43 @@ const Feed = () => {
     caption: "",
   });
 
-  console.log("media",media.src)
-  console.log(file)
+  useEffect(() => {
+    if (dataFetchedRef.current) return;
+    dataFetchedRef.current = true;
+    fetch(
+      "https://instagram-clone-64f73-default-rtdb.firebaseio.com/postData.json"
+    ).then((res) => {
+      res.json().then((dataFromDb) => {
+        for (const key in dataFromDb) {
+          const obj = {
+            id: key,
+            image: dataFromDb[key].url,
+
+            userName: dataFromDb[key].userName,
+            caption: dataFromDb[key].caption,
+          };
+
+          setPosts((prev) => [...prev, obj]);
+        }
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    fetch(
+      `https://instagram-clone-64f73-default-rtdb.firebaseio.com/onBoardedData.json?orderBy="email"&equalTo=${JSON.stringify(
+        email
+      )}`
+    ).then((res) => {
+      res.json().then((data) => {
+        dispatch({
+          type: "SET_USER",
+          user: { email, userName: data[Object.keys(data)].userName },
+        });
+      });
+    });
+  }, []);
+
   useEffect(() => {
     const reader = new FileReader();
 
@@ -45,7 +88,6 @@ const Feed = () => {
             src: reader.result,
           }));
         case "error":
-          console.log(e);
           return toast.error("something not working");
         default:
           return;
@@ -63,6 +105,21 @@ const Feed = () => {
       reader.removeEventListener("error", handleEvent);
     };
   }, [file]);
+  const sendPostDataToDB = (url) => {
+    fetch(
+      "https://instagram-clone-64f73-default-rtdb.firebaseio.com/postData.json",
+      {
+        method: "POST",
+        body: JSON.stringify({ ...user, url: url, caption: media.caption }),
+        headers: {
+          "content-type": "application/json",
+        },
+      }
+    ).then((res) => {
+      res.json().then((data) => {
+      });
+    });
+  };
 
   const handleUploadPost = async () => {
     if (!file) return toast.error("please select a image first");
@@ -76,7 +133,8 @@ const Feed = () => {
     try {
       const uploadTask = await uploadBytes(storageRef, file);
       const url = await getDownloadURL(uploadTask.ref);
-      console.log(url);
+
+      sendPostDataToDB(url);
       toast.success("image has uploaded", {
         id: toastId,
       });
@@ -95,14 +153,13 @@ const Feed = () => {
     }
   };
 
-  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const removePost=()=>{
-   setFile('')
-  }
+  const removePost = () => {
+    setFile("");
+  };
 
-  console.log(posts);
+
   return (
     <div className=" bg-[#FAFAFA] flex  ">
       <Header />
@@ -130,20 +187,35 @@ const Feed = () => {
           ) : (
             <>
               <div className=" flex justify-center items-end">
-                <img type="image" src={media.src} id="fileElem" className="w-[40rem] h-[24rem]" />
+                <img
+                  type="image"
+                  src={media.src}
+                  id="fileElem"
+                  className="w-[40rem] h-[24rem]"
+                />
               </div>
-              <button
-                className="bg-[#0095F6] py-2 px-4 mt-4 text-white active:scale-95 transform transition  disabled:bg-opacity-50 select-none cursor-pointer disabled:scale-100 rounded text-xl font-semibold"
-                onClick={handleUploadPost}
-              >
-                Upload
-              </button>
-              <button
-                className="bg-[#0095F6] py-2 px-4 mt-4 text-white active:scale-95 transform transition  disabled:bg-opacity-50 select-none cursor-pointer disabled:scale-100 rounded text-xl font-semibold"
-                onClick={removePost}
-              >
-                Remove
-              </button>
+              <input
+                placeholder="Type caption(optional)"
+                value={media.caption}
+                onChange={(e) => {
+                  setMedia((prev) => ({ ...prev, caption: e.target.value }));
+                }}
+                className="w-full rounded-md h-10 mt-1 border border-gray-400 p-2"
+              />
+              <div className="flex space-x-6">
+                <button
+                  className="bg-[#0095F6] py-2 px-4 mt-4 text-white active:scale-95 transform transition  disabled:bg-opacity-50 select-none cursor-pointer disabled:scale-100 rounded text-xl font-semibold"
+                  onClick={handleUploadPost}
+                >
+                  Upload
+                </button>
+                <button
+                  className="bg-[#0095F6] py-2 px-4 mt-4 text-white active:scale-95 transform transition  disabled:bg-opacity-50 select-none cursor-pointer disabled:scale-100 rounded text-xl font-semibold"
+                  onClick={removePost}
+                >
+                  Remove
+                </button>
+              </div>
             </>
           )}
         </div>
@@ -160,8 +232,8 @@ const Feed = () => {
             ))}
           </section>
           <section className=" flex flex-col gap-y-3 max-h-96">
-            {new Array(10).fill(0).map(() => {
-              return <Post />;
+            {posts.map((postItem) => {
+              return <Post {...postItem} />;
             })}
           </section>
         </div>

@@ -3,7 +3,7 @@ import { Fragment, useContext, useState } from "react";
 import { GlobalDispatchContext } from "../../context/userContextProvider";
 
 export default function MyModal({ isOpen, children }) {
-  console.log("children", children);
+  // console.log("children", children);
   const dispatch = useContext(GlobalDispatchContext);
 
   // function closeModal() {

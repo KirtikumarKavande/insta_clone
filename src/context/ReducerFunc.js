@@ -1,6 +1,6 @@
 export const ReducerFunc = (state, action) => {
   if (action.type === "SET_USER") {
-    return { ...state, user: action.payload };
+    return { ...state, user: action.user };
   }
   if (action.type === "IS_LOADING") {
     return { ...state, isLoading: action.isLoading };
