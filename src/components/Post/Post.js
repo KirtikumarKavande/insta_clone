@@ -9,6 +9,7 @@ import { IoShareOutline } from "react-icons/io5";
 import { GlobalDispatchContext } from "../../context/userContextProvider";
 
 const Post = (props) => {
+
   console.log(props)
   return (
     <div className="mainContainer w-full border border-gray-100  ">
@@ -52,6 +53,8 @@ const Post = (props) => {
           />
         </div>
       </div>
+      <div className="text-sm">{props.caption}</div>
+
       <div>100 likes</div>
       <div>
         {new Array(3).fill(1).map((_, i) => (
@@ -61,7 +64,7 @@ const Post = (props) => {
           </div>
         ))}
       </div>
-      <div className="">3 hours ago</div>
+      <div className="text-sm ">{(props.createdAt)}</div>
       <div className="flex items-center w-full bg-white border border-l-gray-50">
         <div className="m-2 bg-white">
           <GrEmoji size={20} />

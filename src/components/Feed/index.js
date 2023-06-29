@@ -13,8 +13,7 @@ import { GlobalDispatchContext } from "../../context/userContextProvider";
 import MyModal from "../../utilitis/Modal/Modal";
 
 const Feed = () => {
-
-const dataFetchedRef = useRef(false)
+  const dataFetchedRef = useRef(false);
 
   const email = localStorage.getItem("email");
 
@@ -23,6 +22,12 @@ const dataFetchedRef = useRef(false)
   const { isModalOpen } = useContext(UserCtx);
   const dispatch = useContext(GlobalDispatchContext);
   const { user } = useContext(UserCtx);
+
+  let objectDate = new Date();
+  let day = objectDate.getDate();
+   let month = objectDate.getMonth()+1;
+   let year = objectDate.getFullYear();
+
 
   const closeModal = () => {
     dispatch({
@@ -44,7 +49,7 @@ const dataFetchedRef = useRef(false)
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
     fetch(
-      "https://instagram-clone-64f73-default-rtdb.firebaseio.com/postData.json"
+      "https://instagram-clone-64f73-default-rtdb.firebaseio.com/postData.json "
     ).then((res) => {
       res.json().then((dataFromDb) => {
         for (const key in dataFromDb) {
@@ -54,9 +59,11 @@ const dataFetchedRef = useRef(false)
 
             userName: dataFromDb[key].userName,
             caption: dataFromDb[key].caption,
+            createdAt: dataFromDb[key].createdAt
+         
           };
 
-          setPosts((prev) => [...prev, obj]);
+          setPosts((prev) => [obj, ...prev]);
         }
       });
     });
@@ -69,6 +76,8 @@ const dataFetchedRef = useRef(false)
       )}`
     ).then((res) => {
       res.json().then((data) => {
+        console.log("user data", data);
+
         dispatch({
           type: "SET_USER",
           user: { email, userName: data[Object.keys(data)].userName },
@@ -110,14 +119,19 @@ const dataFetchedRef = useRef(false)
       "https://instagram-clone-64f73-default-rtdb.firebaseio.com/postData.json",
       {
         method: "POST",
-        body: JSON.stringify({ ...user, url: url, caption: media.caption }),
+        body: JSON.stringify({
+          ...user,
+          url: url,
+          caption: media.caption,
+          createdAt: `${day}-${month}--${year}`,
+        }),
         headers: {
           "content-type": "application/json",
         },
       }
     ).then((res) => {
-      res.json().then((data) => {
-      });
+      res.json().then((data) => {});
+      location.reload()
     });
   };
 
@@ -158,7 +172,6 @@ const dataFetchedRef = useRef(false)
   const removePost = () => {
     setFile("");
   };
-
 
   return (
     <div className=" bg-[#FAFAFA] flex  ">
