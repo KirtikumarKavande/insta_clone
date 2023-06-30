@@ -59,7 +59,11 @@ const Feed = () => {
 
             userName: dataFromDb[key].userName,
             caption: dataFromDb[key].caption,
-            createdAt: dataFromDb[key].createdAt
+            createdAt: dataFromDb[key].createdAt,
+            likeCount:dataFromDb[key].likeCount,
+            likedByArray:dataFromDb[key].likedByArray
+
+         
          
           };
 
@@ -76,7 +80,6 @@ const Feed = () => {
       )}`
     ).then((res) => {
       res.json().then((data) => {
-        console.log("user data", data);
 
         dispatch({
           type: "SET_USER",
@@ -123,6 +126,8 @@ const Feed = () => {
           ...user,
           url: url,
           caption: media.caption,
+          likeCount:0,
+          likedByArray:["dummy"],
           createdAt: `${day}-${month}--${year}`,
         }),
         headers: {
