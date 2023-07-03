@@ -25,9 +25,8 @@ const Feed = () => {
 
   let objectDate = new Date();
   let day = objectDate.getDate();
-   let month = objectDate.getMonth()+1;
-   let year = objectDate.getFullYear();
-
+  let month = objectDate.getMonth() + 1;
+  let year = objectDate.getFullYear();
 
   const closeModal = () => {
     dispatch({
@@ -60,11 +59,8 @@ const Feed = () => {
             userName: dataFromDb[key].userName,
             caption: dataFromDb[key].caption,
             createdAt: dataFromDb[key].createdAt,
-            likeCount:dataFromDb[key].likeCount,
-            likedByArray:dataFromDb[key].likedByArray
-
-         
-         
+            likeCount: dataFromDb[key].likeCount,
+            likedByArray: dataFromDb[key].likedByArray,
           };
 
           setPosts((prev) => [obj, ...prev]);
@@ -80,7 +76,6 @@ const Feed = () => {
       )}`
     ).then((res) => {
       res.json().then((data) => {
-
         dispatch({
           type: "SET_USER",
           user: { email, userName: data[Object.keys(data)].userName },
@@ -126,8 +121,8 @@ const Feed = () => {
           ...user,
           url: url,
           caption: media.caption,
-          likeCount:0,
-          likedByArray:["dummy"],
+          likeCount: 0,
+          likedByArray: ["dummy"],
           createdAt: `${day}-${month}--${year}`,
         }),
         headers: {
@@ -136,7 +131,7 @@ const Feed = () => {
       }
     ).then((res) => {
       res.json().then((data) => {});
-      location.reload()
+      location.reload();
     });
   };
 

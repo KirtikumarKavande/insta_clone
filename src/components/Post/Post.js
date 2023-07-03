@@ -16,90 +16,97 @@ const Post = (props) => {
   const likesData = useSelector((state) => state.likes.likes);
   const { user } = useContext(UserCtx);
 
-  console.log(["props", props]);
   const dispatch = useDispatch();
   const dataFetchedRef = useRef(false);
   const dataFetchedRef2 = useRef(false);
 
-  const [likes, setLikes] = useState();
-  const [likesCount, setLikesCount] = useState(false);
-
-  useEffect(() => {
-
-    setLikes(likesData[props.id]?.likedByArray?.includes(user.userName));
-  }, []);
-
+ 
   useEffect(() => {
     likeGetData();
-  }, [likes]);
+  }, [likesData]);
 
   const likeGetData = async () => {
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
     const res = await fetch(`${databaseUrl}/postData.json`);
     const data = await res.json();
+
     dispatch(likeAction(data));
   };
-
-
 
   console.log("likes", likesData);
   console.log("likes1", props);
 
- 
+  console.log("kes", Object.keys(likesData));
 
   const AddLikeButton = () => {
-
-
-    setLikes(true);
-    
+   const updatedArray = likesData[props.id].likedByArray
     if (likesData[props.id]) {
       fetch(`${databaseUrl}/postData/${props.id}.json`, {
         method: "PUT",
         body: JSON.stringify({
           ...props,
           url: props.image,
-          likeCount: Number(likesData[props.id].likeCount) + 1,
 
-          likedByArray:  [...likesData[props.id]?.likedByArray, user?.userName]
-          
+          likedByArray: [...likesData[props.id]?.likedByArray, user?.userName],
+          likeCount: updatedArray.length
+
         }),
         headers: {
           "content-type": "application/json",
         },
       });
 
-      // dispatch(likesCountManageAction({likeCount:props.likeCount+1}))
-      // dispatch(likeAction({...likesData,likeCount:likesData[props.id].likeCount+1}));
+      const updatedProps = {
+        ...props,
+        likedByArray: [...props.likedByArray, user.userName],
+        likeCount: props.likeCount+1 ,
+
+      };
+      Object.keys(likesData).map((item) => {
+        if (item === updatedProps.id) {
+          console.log("inside ", item);
+          dispatch(likeAction({ ...likesData, [item]: updatedProps }));
+        }
+      });
     }
   };
 
   const removeFromLike = () => {
-    setLikes(false);
-
     const updatedArray = likesData[props.id].likedByArray.filter((item) => {
       return item !== user.userName;
     });
+    const updatedProps = {
+      ...props,
+      likeCount: updatedArray.length-1 ,
+      likedByArray: updatedArray,
+    };
+    Object.keys(likesData).map((item) => {
+      if (item === updatedProps.id) {
+        console.log("inside ", item);
+        dispatch(likeAction({ ...likesData, [item]: updatedProps }));
+      }
+    });
+
     if (likesData[props.id]) {
       fetch(`${databaseUrl}/postData/${props.id}.json`, {
         method: "PUT",
         body: JSON.stringify({
           ...props,
           url: props.image,
-          likeCount: Number(likesData[props.id].likeCount) - 1,
-
           likedByArray: updatedArray,
+
+          likeCount:updatedArray.length-1 ,
+
         }),
         headers: {
           "content-type": "application/json",
         },
       });
     }
-    // dispatch(likeAction({...likesData,likeCount:likesData[props.id].likeCount-1}));
-
   };
   return (
-    <div className="mainContainer w-full border border-gray-100  ">
+    <div className="mainContainer w-full border border-gray-100 pl-1 ">
       <div className="1 upper flex bg-white p-2 justify-between">
         <div className="flex items-center justify-center">
           <div className="w-10 h-10 bg-gray-400 border border-pink-400 rounded-full " />
@@ -115,8 +122,6 @@ const Post = (props) => {
       <div className="3 flex justify-between">
         <div className="flex  mt-2 space-x-3">
           <div>
-           
-
             {likesData[props.id]?.likedByArray?.includes(user.userName) && (
               <div onClick={removeFromLike}>
                 <AiFillHeart
@@ -156,7 +161,7 @@ const Post = (props) => {
       </div>
       <div className="text-sm">{props.caption}</div>
 
-      <div>{props.likesCount}</div>
+      <div className="text-sm font-bold" >{likesData[props.id]?.likeCount} likes</div>
       <div>
         {new Array(3).fill(1).map((_, i) => (
           <div className="flex space-x-2">

@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-const initiallikesState={likes:{ },likesCountManger:{}}
+const initiallikesState={likes:{},likesCountManger:{}}
 const likeSlice=createSlice({
     name:"likes",
     initialState:initiallikesState,
     reducers:{
         likes(state,action){
-            state.likes=action.payload
+            state.likes={...action.payload}
         },
         likesCountManage(){
             // state.likesCountManger=action.payload
