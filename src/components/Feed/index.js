@@ -61,6 +61,7 @@ const Feed = () => {
             createdAt: dataFromDb[key].createdAt,
             likeCount: dataFromDb[key].likeCount,
             likedByArray: dataFromDb[key].likedByArray,
+            comment:dataFromDb[key].comment
           };
 
           setPosts((prev) => [obj, ...prev]);
@@ -123,7 +124,8 @@ const Feed = () => {
           caption: media.caption,
           likeCount: 0,
           likedByArray: ["dummy"],
-          createdAt: `${day}-${month}--${year}`,
+          commentOnPost:[],
+          createdAt: `${day}-${month}-${year}`,
         }),
         headers: {
           "content-type": "application/json",
