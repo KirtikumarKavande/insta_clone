@@ -11,6 +11,7 @@ import { uuidv4 } from "@firebase/util";
 import UserCtx from "../../context/userContext";
 import { GlobalDispatchContext } from "../../context/userContextProvider";
 import MyModal from "../../utilitis/Modal/Modal";
+import Card from "../../utilitis/Card";
 
 const Feed = () => {
   const dataFetchedRef = useRef(false);
@@ -61,7 +62,7 @@ const Feed = () => {
             createdAt: dataFromDb[key].createdAt,
             likeCount: dataFromDb[key].likeCount,
             likedByArray: dataFromDb[key].likedByArray,
-            comment:dataFromDb[key].comment
+            comment: dataFromDb[key].comment,
           };
 
           setPosts((prev) => [obj, ...prev]);
@@ -124,7 +125,7 @@ const Feed = () => {
           caption: media.caption,
           likeCount: 0,
           likedByArray: ["dummy"],
-          commentOnPost:[],
+          commentOnPost: [],
           createdAt: `${day}-${month}-${year}`,
         }),
         headers: {
@@ -252,9 +253,17 @@ const Feed = () => {
             })}
           </section>
         </div>
-        <div className="col-span-1 bg-blue-400 h-fit  fixed  right-0 w-[8.3rem] md:w-[16rem] lg:w-[25rem] ">
-          tyhjvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvacxb
-          nxxxxxxxxxs
+        <div className="col-span-1   fixed  right-0 w-[8.3rem] md:w-[16rem] lg:w-[25rem]  h-screen overflow-y-scroll ">
+          <div className="text-gray-500 font-medium mb-[1rem]">Suggested For You</div>
+
+          <div className="block h-12 items-center max-w-sm flex mb-2 bg-white border justify-between border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+            <div className="mb-2 ml-2  font-semibold tracking-tight  text-gray-900 dark:text-white text-lg ">
+              Kirtikumar Kavande
+            </div>
+            <button className="bg-blue-500 p-1 rounded-sm mr-2">Follow</button>
+          </div>
+
+          
         </div>
       </div>
     </div>
