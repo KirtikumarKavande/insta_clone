@@ -13,7 +13,12 @@ import { GlobalDispatchContext } from "../../context/userContextProvider";
 import MyModal from "../../utilitis/Modal/Modal";
 import Card from "../../utilitis/Card";
 
+let myStatus = true;
 const Feed = () => {
+  const [isFollow, setFollow] = useState(true);
+  const dataFetchedRef2 = useRef(false);
+
+  const [userData, setUserData] = useState([]);
   const dataFetchedRef = useRef(false);
 
   const email = localStorage.getItem("email");
@@ -82,6 +87,27 @@ const Feed = () => {
           type: "SET_USER",
           user: { email, userName: data[Object.keys(data)].userName },
         });
+      });
+    });
+  }, []);
+  useEffect(() => {
+    if (dataFetchedRef2.current) return;
+    dataFetchedRef2.current = true;
+    fetch(
+      "https://instagram-clone-64f73-default-rtdb.firebaseio.com/onBoardedData.json"
+    ).then((res) => {
+      res.json().then((data) => {
+        for (const key in data) {
+          const obj = {
+            id: key,
+
+            fullName: data[key].fullName,
+          };
+
+          setUserData((prev) =>
+            [...prev, { ...obj, follow: true }].slice(0, 10)
+          );
+        }
       });
     });
   }, []);
@@ -175,6 +201,41 @@ const Feed = () => {
   const removePost = () => {
     setFile("");
   };
+  // const followersData = async (item) => {
+  //   const  getData= await fetch("https://instagram-clone-64f73-default-rtdb.firebaseio.com/followers.json",)
+  //    const updateddData=await getData.json()
+  //    let newupdatedData = [];
+  //    if (updateddData) {
+  //     newupdatedData = [updateddData];
+  //    }
+
+  // const res= await fetch(`https://instagram-clone-64f73-default-rtdb.firebaseio.com/followers/${user.userName}.json`,
+
+  // {
+
+  //   method:"PUT",
+  //   body:JSON.stringify({
+  //    ...newupdatedData,item
+  //   }),
+  //   headers:{"content-type":"application/json"}
+  // });
+  // const data=await res.json()
+  // };
+
+  const followersHandler = (item) => {
+    console.log("name", item.fullName);
+    console.log("name", userData);
+    let updateduserData = userData.filter((user) => {
+      if (user.fullName !== item.fullName) {
+        return user;
+      }else{
+        return 
+      }
+    });
+    console.log(updateduserData);
+
+    setUserData([...updateduserData, { ...item, follow: false }]);
+  };
 
   return (
     <div className=" bg-[#FAFAFA] flex  ">
@@ -254,16 +315,28 @@ const Feed = () => {
           </section>
         </div>
         <div className="col-span-1   fixed  right-0 w-[8.3rem] md:w-[16rem] lg:w-[25rem]  h-screen overflow-y-scroll ">
-          <div className="text-gray-500 font-medium mb-[1rem]">Suggested For You</div>
-
-          <div className="block h-12 items-center max-w-sm flex mb-2 bg-white border justify-between border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-            <div className="mb-2 ml-2  font-semibold tracking-tight  text-gray-900 dark:text-white text-lg ">
-              Kirtikumar Kavande
-            </div>
-            <button className="bg-blue-500 p-1 rounded-sm mr-2">Follow</button>
+          <div className="text-gray-500 font-medium mb-[1rem]">
+            Suggested For You
           </div>
-
-          
+          {userData.map((item) => {
+            return (
+              <div className="block h-12 items-center max-w-sm flex mb-2 bg-white border justify-between border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                <div className="mb-2 ml-2  font-semibold tracking-tight  text-gray-900 dark:text-white text-lg ">
+                  {item.fullName}
+                </div>
+                {item.follow && (
+                  <button
+                    className="bg-blue-500 p-1 rounded-sm mr-2"
+                    onClick={() => {
+                      followersHandler(item);
+                    }}
+                  >
+                    Follow
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

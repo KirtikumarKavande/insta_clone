@@ -39,10 +39,10 @@ const Post = (props) => {
     dispatch(likeAction(data));
   };
 
-  console.log("likes", likesData);
-  console.log("likes1", props);
+  // console.log("likes", likesData);
+  // console.log("likes1", props);
 
-  console.log("kes", Object.keys(likesData));
+  // console.log("kes", Object.keys(likesData));
 
   const AddLikeButton = () => {
     const updatedArray = likesData[props.id].likedByArray;
@@ -68,7 +68,7 @@ const Post = (props) => {
       };
       Object.keys(likesData).map((item) => {
         if (item === updatedProps.id) {
-          console.log("inside ", item);
+          // console.log("inside ", item);
           dispatch(likeAction({ ...likesData, [item]: updatedProps }));
         }
       });
@@ -86,7 +86,7 @@ const Post = (props) => {
     };
     Object.keys(likesData).map((item) => {
       if (item === updatedProps.id) {
-        console.log("inside ", item);
+        // console.log("inside ", item);
         dispatch(likeAction({ ...likesData, [item]: updatedProps }));
       }
     });
@@ -107,19 +107,19 @@ const Post = (props) => {
       });
     }
   };
-  console.log("focus", commentState);
+  // console.log("focus", commentState);
 
   const handleComment = async (e) => {
     e.preventDefault();
 
     const res = await fetch(`${databaseUrl}/commentData/${commentState}.json`);
     let data = await res.json();
-    console.log("data inside", data);
+    // console.log("data inside", data);
     let updatedData = [];
     if (data) {
       updatedData = [...data];
     }
-    console.log("updatedData", updatedData);
+    // console.log("updatedData", updatedData);
 
     e.preventDefault();
 
@@ -140,7 +140,7 @@ const Post = (props) => {
     });
     commentInput.current.value = "";
   };
-  console.log("commentData", commentData);
+  // console.log("commentData", commentData);
   return (
     <div className="mainContainer w-full border border-gray-100 pl-1 ">
       {!Array.isArray(commentData) && (

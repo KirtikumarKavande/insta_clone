@@ -5,7 +5,7 @@ import { databaseUrl } from "../api";
 
 export default function CommentModal({ isOpen, setIsCommentModal, data }) {
   const [apiData, setApiData] = useState([]);
-  console.log("data in modal", data);
+  // console.log("data in modal", data);
   //   let [isOpen, setIsOpen] = useState(true)
 
   function closeModal() {
@@ -24,7 +24,7 @@ export default function CommentModal({ isOpen, setIsCommentModal, data }) {
     const res = await fetch(`${databaseUrl}/commentData/${data.id}.json`);
     let apiData = await res.json();
     setApiData(apiData);
-    console.log("apidata", apiData);
+    // console.log("apidata", apiData);
   };
 
   return (
